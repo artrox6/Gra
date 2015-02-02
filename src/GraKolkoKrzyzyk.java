@@ -1,12 +1,17 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class GraKolkoKrzyzyk extends JFrame implements ActionListener
+public class GraKolkoKrzyzyk extends JFrame implements ActionListener 
 {	
 	
 //Miejsce tworzenia  obiektow 
@@ -14,7 +19,7 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
    private JButton bNowaGra = new JButton("Nowa Gra");
    private Gracz gracz = new Gracz();
    private TabelaWynikow tabelaW = new TabelaWynikow();
-		 
+    
 //Tworzenie ramki gry
    public GraKolkoKrzyzyk()
      {
@@ -26,30 +31,31 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 	    bNowaGra.addActionListener(this);
 	    add(bNowaGra);
 //Wstawienie opisu pÃ³l planszy gry 
-	    JLabel PolaPoziom = new JLabel("A        B        C");
-	    PolaPoziom.setBounds(170, 100, 120, 30);
+	    JLabel PolaPoziom = new JLabel("A                     B                     C");
+	    PolaPoziom.setBounds(110, 35, 300, 30);
 	    add(PolaPoziom);
 		
 	    JLabel PolaPion1 = new JLabel("1");
-	    PolaPion1.setBounds(145, 130, 30, 30);
+	    PolaPion1.setBounds(50, 90, 30, 30);
 	    add(PolaPion1);
 		
 	    JLabel PolaPion2 = new JLabel("2");
-	    PolaPion2.setBounds(145, 160, 30, 30);
+	    PolaPion2.setBounds(50, 160, 30, 30);
 	    add(PolaPion2);
 		
 	    JLabel PolaPion3 = new JLabel("3");
-	    PolaPion3.setBounds(145, 190, 30, 30);
+	    PolaPion3.setBounds(50, 230, 30, 30);
 	    add(PolaPion3);
      }
 //Metoda tworzaca tabele obiektÃ³w JCheckBox 3x3 , po kliknieciu w chceck box odpowiednia wartosc (gracz kolko =1 ; gracz krzyzyk = 0)wpisywana jest do tabeli wynikÃ³w
-   private JCheckBox[][] stworzCheckBoxy()
+   private JCheckBox[][] stworzCheckBoxy() throws IOException
       {
 	     for(int i = 0; i < 3;i++)
 		    {
 		       for (int j = 0; j<3;j++)
 			      {
-				     checkBoxy[i][j] = new JCheckBox();
+		    	   BufferedImage buferedImage = ImageIO.read(new File("Start.jpg"));	
+				     checkBoxy[i][j] = new JCheckBox(new ImageIcon(buferedImage));
 					 checkBoxy[i][j].addActionListener(this);
 				  }					
 			 }
@@ -60,25 +66,25 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 	  {
 	     int i=0;
 		 int j=0;
-		 int x=163;
-		 int y=128;
+		 int x=73;
+		 int y=68;
 		 for ( j = 0; j < 3;j++)
 		    {
 		       for ( i = 0; i<3;i++)
 			      {
-			         checkBoxy[i][j].setBounds(x, y, 30, 30);
+			         checkBoxy[i][j].setBounds(x, y, 75, 75);
 			         add(checkBoxy[i][j]);
-				     y=y+30;
-				     if(y>188)
+				     y=y+70;
+				     if(y>277)
 					    {
-					       y=128;
+					       y=68;
 					    }
 			
 			      }		
-			   x=x+32;
-			   if(x>227)
+			   x=x+72;
+			   if(x>283)
 			      {
-				     x=163;
+				     x=73;
 			      }
 		     }
 		  return checkBoxy;
@@ -86,7 +92,7 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 
 
 //Metoda sprawdzajaca wyniki w  tabeli jesli warunki zostana spelnione wyswietla komunikat o zwyciestwie gracza
-	private void sprawdzanieZwyciezcy()
+	private void sprawdzanieZwyciezcy() throws IOException
 	   {	int i;	
 	      int j;
 		  int licznikKolko=0;
@@ -100,11 +106,14 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 				      {
 					     if(tabelaW.tablica[i][j]==1)
 						    {
-							   licznikKolko++;
+					    	 checkBoxy[i][j].setIcon(new ImageIcon("Kolko.jpg"));
+					    	 licznikKolko++;
 							}
 						 else if (tabelaW.tablica[i][j]==0)
 						    {
 							   licznikKrzyzyk++;
+							   checkBoxy[i][j].setIcon(new ImageIcon("krzyzyk.jpg"));
+							   
 							}
 						 if(licznikKolko==3)
 							{
@@ -161,7 +170,7 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 
 
 //Metoda zawierajaca w sobie wszystkie kluczowe metody dla programu, bedzie wywolywana po rozpoczeciu programu.
-	public void rozpocznijGre()
+	public void rozpocznijGre() throws IOException
 	   {
 		  tabelaW.tworzenieTabeliWynikow();
 		  stworzCheckBoxy();
@@ -174,7 +183,7 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 	      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           setVisible(true);		
 	   }
-	public static void main(String[] args) 
+	public static void main(String[] args) throws IOException 
 	   {
           GraKolkoKrzyzyk oknoGry = new GraKolkoKrzyzyk();
 		  oknoGry.rozpocznijGre();
@@ -188,7 +197,12 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 		        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		        dispose();
 		        GraKolkoKrzyzyk oknoGry = new GraKolkoKrzyzyk();
-		        oknoGry.rozpocznijGre();
+		        try {
+					oknoGry.rozpocznijGre();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		     }
 		
 		  else
@@ -211,7 +225,12 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 								  System.out.println("tabelaW.tablica["+i+"]["+j+"] " + tabelaW.tablica[i][j]);
 								  gracz.przydzielGracza();	
 							   }
-						    sprawdzanieZwyciezcy();
+						    try {
+								sprawdzanieZwyciezcy();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 					     }		
 				      
 			      }
