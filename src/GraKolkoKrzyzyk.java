@@ -1,3 +1,4 @@
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -19,33 +20,37 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
    private JButton bNowaGra = new JButton("Nowa Gra");
    private Gracz gracz = new Gracz();
    private TabelaWynikow tabelaW = new TabelaWynikow();
-    
+   private boolean wygrana = false;
 //Tworzenie ramki gry
    public GraKolkoKrzyzyk()
      {
-        setSize(400,400);
+	     
+        setSize(350,400);
         setTitle("Kolko i Krzyzyk");
 	    setLayout(null);
 			
-	    bNowaGra.setBounds(150, 300, 100, 30);
+	    bNowaGra.setBounds(125, 300, 100, 30);
 	    bNowaGra.addActionListener(this);
 	    add(bNowaGra);
 //Wstawienie opisu pÃ³l planszy gry 
 	    JLabel PolaPoziom = new JLabel("A                     B                     C");
-	    PolaPoziom.setBounds(110, 35, 300, 30);
+	    PolaPoziom.setBounds(100, 35, 300, 30);
+	    PolaPoziom.setOpaque(false);
 	    add(PolaPoziom);
 		
+	  
 	    JLabel PolaPion1 = new JLabel("1");
 	    PolaPion1.setBounds(50, 90, 30, 30);
 	    add(PolaPion1);
-		
+	    PolaPion1.setOpaque(false);
 	    JLabel PolaPion2 = new JLabel("2");
 	    PolaPion2.setBounds(50, 160, 30, 30);
 	    add(PolaPion2);
-		
+	    PolaPion2.setOpaque(false);
 	    JLabel PolaPion3 = new JLabel("3");
 	    PolaPion3.setBounds(50, 230, 30, 30);
 	    add(PolaPion3);
+	    PolaPion3.setOpaque(false);
      }
 //Metoda tworzaca tabele obiektÃ³w JCheckBox 3x3 , po kliknieciu w chceck box odpowiednia wartosc (gracz kolko =1 ; gracz krzyzyk = 0)wpisywana jest do tabeli wynikÃ³w
    private JCheckBox[][] stworzCheckBoxy() throws IOException
@@ -118,10 +123,12 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 						 if(licznikKolko==3)
 							{
 							   System.out.println("Wygral Gracz Kolko");
+							   wygrana=true;
 							}
 						 else if(licznikKrzyzyk==3)
 							{
 							   System.out.println("Wygral Gracz krzyzyk");
+							   wygrana=true;
 							}
 					  }
 					
@@ -144,10 +151,12 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 						 if(licznikKolko==3)
 							{
 							   System.out.println("Wygral Gracz Kolko");
+							   wygrana=true;
 							}
 						 else if(licznikKrzyzyk==3)
 							{
-							   System.out.println("Wygral Gracz krzyzyk");
+							   System.out.println("Wygral Gracz Krzyzyk");
+							   wygrana=true;
 							}
 					  }
 					
@@ -158,11 +167,13 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 		   (tabelaW.tablica[2][0] == 1 && tabelaW.tablica[1][1] == 1 && tabelaW.tablica[0][2] == 1))	
 		      {
 			     System.out.println("Wygral Gracz Kolko");
+			     wygrana=true;
 			  }
 	  else if	((tabelaW.tablica[2][0] == 0 && tabelaW.tablica[1][1] == 0 && tabelaW.tablica[0][2] == 0) ||
 				(tabelaW.tablica[0][0] == 0 && tabelaW.tablica[1][1] == 0 && tabelaW.tablica[2][2] == 0))	
 			  {
 			     System.out.println("Wygral Gracz krzyzyk");
+			     wygrana=true;
 			  }
 	
 		
@@ -176,6 +187,7 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 		  stworzCheckBoxy();
 		  wyswietlCheckBoxy();
 		  wyswietl();
+		  wygrana=false;
 	   }
 //Metoda wyswietlajaca okno gry
 	private void wyswietl()
@@ -185,8 +197,18 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 	   }
 	public static void main(String[] args) throws IOException 
 	   {
-          GraKolkoKrzyzyk oknoGry = new GraKolkoKrzyzyk();
-		  oknoGry.rozpocznijGre();
+         
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run(){
+			GraKolkoKrzyzyk oknoGry = new GraKolkoKrzyzyk();
+			try {
+				oknoGry.rozpocznijGre();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}}
+	    });
 	   }
 	public void actionPerformed(ActionEvent e) 
 	   {
@@ -211,27 +233,33 @@ public class GraKolkoKrzyzyk extends JFrame implements ActionListener
 		     {
 			    for (int j = 0; j<3;j++)
 			       {
-				      if(zrodlo == checkBoxy[i][j])
-					     {
-						    if((checkBoxy[i][j].isSelected()==true)&&(gracz.graczAktualny == gracz.graczKolko))
-							   {
-								  tabelaW.tablica[i][j]=1;
-								  System.out.println("tabelaW.tablica["+i+"]["+j+"] " + tabelaW.tablica[i][j]);
-								  gracz.przydzielGracza();
-							   }
-					        else if((checkBoxy[i][j].isSelected()==true)&&(gracz.graczAktualny == gracz.graczKrzyzyk))
-					           {
-								  tabelaW.tablica[i][j]=0;
-								  System.out.println("tabelaW.tablica["+i+"]["+j+"] " + tabelaW.tablica[i][j]);
-								  gracz.przydzielGracza();	
-							   }
-						    try {
-								sprawdzanieZwyciezcy();
+				     if(wygrana!= true)
+				     {
+			    		if(tabelaW.tablica[i][j]!=1)
+			    		{
+			    			if(zrodlo == checkBoxy[i][j])
+			    				{
+			    					if((checkBoxy[i][j].isSelected()==true)&&(gracz.graczAktualny == gracz.graczKolko))
+			    					{
+			    						tabelaW.tablica[i][j]=1;
+			    						System.out.println("tabelaW.tablica["+i+"]["+j+"] " + tabelaW.tablica[i][j]);
+			    						gracz.przydzielGracza();
+			    					}
+			    					else if((checkBoxy[i][j].isSelected()==true)&&(gracz.graczAktualny == gracz.graczKrzyzyk))
+			    					{
+			    						tabelaW.tablica[i][j]=0;
+			    						System.out.println("tabelaW.tablica["+i+"]["+j+"] " + tabelaW.tablica[i][j]);
+			    						gracz.przydzielGracza();	
+			    					}
+			    					try {
+			    						sprawdzanieZwyciezcy();
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
+								
 								e1.printStackTrace();
 							}
-					     }		
+					     }	
+			    		}
+				     }
 				      
 			      }
 		   }
